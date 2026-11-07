@@ -3,7 +3,7 @@
 An end-to-end LLM engineering project: measure a small LLM on a 77-class banking intent
 task, fine-tune it with LoRA, re-measure, and wrap it in guardrails.
 
-**Status:** 🚧 In progress. Data, baseline and error analysis done; fine-tuning next.
+**Status:** 🚧 In progress. Data, baseline, error analysis and fine-tuning data done; LoRA training next.
 See [plan.md](plan.md) for the full roadmap.
 
 ## Results so far
@@ -28,6 +28,8 @@ backend/
   labels.py          The 77 intent names
   explore_data.py    Dataset statistics (balance, lengths, leakage)
   make_splits.py     Stratified train/validation split (seed 42)
+  prompts.py         Shared prompt for eval and training
+  prepare_sft.py     Build chat-format fine-tuning data
   eval_baseline.py   Evaluate any Ollama model on the test set
   error_analysis.py  Break down how and why a model fails
 results/             Metrics (JSON) and per-example predictions (CSV)
@@ -45,6 +47,7 @@ uv pip install -r requirements.txt
 python backend/data.py            # download dataset
 python backend/explore_data.py    # dataset statistics
 python backend/make_splits.py     # train/validation split
+python backend/prepare_sft.py     # fine-tuning data (chat format)
 
 ollama pull qwen2.5:0.5b
 python backend/eval_baseline.py --limit 50 --show   # quick look

@@ -51,6 +51,7 @@ LLM/
 ├── backend/                All Python code
 │   ├── data.py             Load Banking77 + cache as JSONL
 │   ├── labels.py           The 77 intent names
+│   ├── prompts.py          Shared prompt for eval + training (Phase 4)
 │   ├── explore_data.py     Dataset statistics (Phase 1)
 │   ├── make_splits.py      Train/validation split (Phase 1)
 │   ├── error_analysis.py   How/why a model fails (Phases 3 & 7)
@@ -177,14 +178,23 @@ That's fine. A low baseline gives fine-tuning room to show its value.
 length, and why training and inference prompts must match.
 
 **Steps**
-1. Convert each train example into a chat conversation:
+1. ✅ Convert each train example into a chat conversation:
    `system` (instructions) → `user` (query) → `assistant` (`{"intent": "card_arrival"}`).
-2. Decide whether the 77-label list stays in the prompt (a trade-off: longer prompts vs. a model
-   that has memorized the labels). We'll discuss this when we get there.
-3. Write `data/sft_train.jsonl` and `data/sft_val.jsonl`.
-4. Count tokens per example to choose a max sequence length.
+2. ✅ Decision: **keep the 77-label list in the prompt** (option A), so Phase 7 changes only the
+   weights. The prompt now lives in `backend/prompts.py`, shared by eval and training (verified
+   byte-identical to the baseline prompt). A short-prompt variant is a possible follow-up experiment.
+3. ✅ Write `data/sft_train.jsonl` and `data/sft_val.jsonl` (`python backend/prepare_sft.py`).
+4. ✅ Count tokens per example with Qwen's real tokenizer.
 
 **Done when:** the JSONL files exist and a sample row looks right.
+
+**What we found**
+- 8,997 train / 1,002 val conversations. Every target answer passes our own eval parser.
+- ~474 tokens per conversation: **441 are the shared system prompt**, ~20 the customer message,
+  ~9 the answer. Only ~2% of tokens are the answer, so in Phase 5 we compute the loss
+  **only on the assistant answer** (otherwise most of the training signal is spent re-reading the label list).
+- Longest example: 557 tokens, so **`max_seq_length = 576`** (no truncation).
+- ~4.3M tokens per epoch.
 
 ---
 
@@ -288,7 +298,7 @@ how often each guardrail fires.
 - [x] Phase 1: Load and explore data
 - [x] Phase 2: Baseline eval (qwen2.5:0.5b zero-shot: 25.2% accuracy, 97.1% JSON-valid, 25.2% OOV)
 - [x] Phase 3: Error analysis (main failure: keyword-matching between sibling intents)
-- [ ] Phase 4: Prepare SFT data
+- [x] Phase 4: Prepare SFT data (label list kept in prompt; max_seq_length 576)
 - [ ] Phase 5: LoRA fine-tune
 - [ ] Phase 6: Export to Ollama
 - [ ] Phase 7: Re-evaluate and compare

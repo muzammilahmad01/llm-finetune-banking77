@@ -25,22 +25,12 @@ from tqdm import tqdm
 
 from data import PROJECT_ROOT, load_split
 from labels import LABEL_SET, LABELS
+from prompts import SYSTEM_PROMPT, build_messages  # shared with training data
 
 OLLAMA_URL = "http://localhost:11434"
 RESULTS_DIR = PROJECT_ROOT / "results"
 CSV_FIELDS = ["idx", "text", "gold", "pred", "json_valid", "in_vocab", "correct",
               "latency_s", "raw_response"]
-
-# The label list goes in the *system* message, identical for every request.
-# Because each prompt starts with the same long prefix, Ollama can reuse its
-# KV cache for that prefix, so only the short user query is processed fresh each time.
-SYSTEM_PROMPT = (
-    "You are an intent classifier for a banking customer-support assistant.\n"
-    "Classify the user's message into exactly one of these intents:\n\n"
-    + "\n".join(LABELS)
-    + "\n\nRespond with JSON only, no other text, in this exact format:\n"
-    '{"intent": "<one intent from the list above>"}'
-)
 
 
 def check_ollama(model: str) -> None:
@@ -61,10 +51,7 @@ def classify(model: str, text: str) -> tuple[str, float]:
     """Send one query to Ollama. Returns (raw response text, latency in seconds)."""
     payload = {
         "model": model,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": text},
-        ],
+        "messages": build_messages(text),
         "stream": False,                    # one complete JSON response, not chunks
         "options": {"temperature": 0},      # greedy decoding: deterministic, repeatable
     }
