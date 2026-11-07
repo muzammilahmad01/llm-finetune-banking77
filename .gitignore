@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Caches and downloaded data (re-created by `python backend/data.py`)
+.cache/
+data/
+
+# Secrets (e.g. GROQ_API_KEY)
+.env
+
+# Model artifacts: too large for git (adapters go to the Hugging Face Hub)
+*.gguf
+*.safetensors
+outputs/
+checkpoints/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
