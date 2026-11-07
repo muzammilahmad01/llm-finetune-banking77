@@ -284,7 +284,7 @@ how often each guardrail fires.
 
 ## Progress tracker
 
-- [ ] Phase 0: Setup *(venv done; .gitignore + git/GitHub still to do)*
+- [x] Phase 0: Setup (repo: https://github.com/muzammilahmad01/llm-finetune-banking77)
 - [x] Phase 1: Load and explore data
 - [x] Phase 2: Baseline eval (qwen2.5:0.5b zero-shot: 25.2% accuracy, 97.1% JSON-valid, 25.2% OOV)
 - [x] Phase 3: Error analysis (main failure: keyword-matching between sibling intents)
