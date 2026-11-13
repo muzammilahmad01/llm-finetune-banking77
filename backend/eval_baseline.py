@@ -42,7 +42,8 @@ def check_ollama(model: str) -> None:
         sys.exit(f"ERROR: can't reach Ollama at {OLLAMA_URL} ({e}).\n"
                  "Start it in another terminal with:  ollama serve")
     available = [m["name"] for m in resp.json().get("models", [])]
-    if model not in available:
+    # Ollama lists untagged models as "<name>:latest" (e.g. our `ollama create banking77-qwen`).
+    if model not in available and f"{model}:latest" not in available:
         sys.exit(f"ERROR: model '{model}' isn't pulled in Ollama. Available: {available}\n"
                  f"Pull it with:  ollama pull {model}")
 

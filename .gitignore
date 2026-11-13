@@ -15,6 +15,7 @@ data/
 *.safetensors
 outputs/
 checkpoints/
+models/
 
 # OS / editor
 .DS_Store

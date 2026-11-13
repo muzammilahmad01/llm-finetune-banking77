@@ -210,12 +210,25 @@ length, and why training and inference prompts must match.
 - Tools: Unsloth (fast, beginner-friendly) or Hugging Face `peft` + `trl`'s `SFTTrainer`
 
 **Steps**
-1. Build `notebooks/finetune_lora.ipynb`: install libraries, load the model, attach LoRA, train.
-2. Train 1–3 epochs and watch validation loss.
-3. Quick sanity check in the notebook on a few validation examples.
-4. Save the LoRA adapter and push it to the Hugging Face Hub (optional, but good for your portfolio).
+1. ✅ Build `notebooks/finetune_lora.ipynb`: install libraries, load the model, attach LoRA, train.
+2. ✅ Train 1–3 epochs and watch validation loss.
+3. ✅ Quick sanity check in the notebook on a few validation examples.
+4. ✅ Save the LoRA adapter (downloaded to `models/banking77-qwen-adapter/`, not in git). HF Hub push skipped for now.
 
 **Done when:** validation loss has dropped and the sample predictions look sensible.
+
+**What we found** (Colab T4, 35 min)
+- QLoRA via Unsloth: r=16, alpha=32, all 7 attention/MLP projections, 8.8M trainable params (1.75%).
+  2 epochs, effective batch 16, lr 2e-4 cosine, 1,126 steps. Loss computed on the assistant answer only.
+- Validation loss: 0.060 (step 250) → 0.040 → 0.032 → 0.026 → **0.026** (step 1126). It kept falling and
+  then flattened; it never rose, so **no overfitting**. Train loss ended ~0.016, a small gap below validation.
+  Plot: `results/loss_curves_lora.png`.
+- Sanity check: **10/10** validation examples correct, all valid JSON.
+- Adapter: 35 MB (`adapter_model.safetensors`). Trained against Unsloth's 4-bit base; we merge into the
+  full-precision base in Phase 6.
+- Lessons: newer TRL removed `DataCollatorForCompletionOnlyLM` (we wrote our own collator), and merging +
+  GGUF export inside Colab ran out of memory and killed the runtime, losing the first run. Save only the
+  small adapter in Colab and download it right away; do the merge locally.
 
 ---
 
@@ -232,6 +245,17 @@ length, and why training and inference prompts must match.
 3. Smoke test: `ollama run banking77-qwen "my card hasn't arrived yet"`.
 
 **Done when:** `ollama list` shows the fine-tuned model.
+
+**What we did** (all on the Mac, no Colab)
+- `python backend/merge_adapter.py`: merged the LoRA adapter into the full-precision
+  `Qwen/Qwen2.5-0.5B-Instruct` on CPU. 168 of 291 tensors changed (24 layers × 7 projections),
+  as expected. Also writes the `Modelfile`.
+- Ollama 0.40 can't make Q4_K_M from safetensors (only int4/int8/fp4/fp8). The baseline is Q4_K_M,
+  so for a fair comparison we used llama.cpp: `convert_hf_to_gguf.py` → f16 GGUF (948 MB) →
+  `llama-quantize … Q4_K_M` (379 MB) → `ollama create banking77-qwen -f Modelfile`.
+- The `Modelfile` copies the baseline's chat template and sets our classifier prompt as the default
+  system prompt, so `ollama run banking77-qwen "my card hasn't arrived"` works out of the box.
+- Result: `banking77-qwen` is Q4_K_M, 397 MB, same as `qwen2.5:0.5b`. Only the weights differ.
 
 ---
 
@@ -254,6 +278,28 @@ length, and why training and inference prompts must match.
 3. Repeat the Phase 3 error analysis on the new model: which confusions remain?
 
 **Done when:** the table is filled in with real numbers.
+
+**What we found** (full test set, 3,080 examples, same script and prompt, both Q4_K_M)
+
+| Model | Accuracy | JSON-valid | OOV | Latency |
+|---|---|---|---|---|
+| qwen2.5:0.5b (zero-shot) | 25.2% | 97.1% | 25.2% | 0.146 s |
+| banking77-qwen (LoRA) | **90.7%** | **99.2%** | **0.2%** | 0.143 s |
+
+- **3.6× accuracy** at the same size and speed. Fine-tuning changed only the weights.
+- Outcomes: 90.7% correct, 8.3% real-but-wrong label, 0.2% invented, 0.8% invalid JSON.
+  The baseline was 25.2% / 46.7% / 25.2% / 2.9%.
+- **No intent scores 0%** (the baseline had 20 at 0%). The remaining confusions are genuine siblings:
+  `topping_up_by_card` → `top_up_reverted` (7×), `beneficiary_not_allowed` → `failed_transfer`,
+  `pending_transfer` → `transfer_not_received_by_recipient`, `card_delivery_estimate` → `card_arrival`.
+  Some of these are arguably label noise in Banking77.
+- **Formatting glitch:** all 24 invalid-JSON answers (and the 7 "invented" labels) have the *right*
+  intent but drop the closing quote: `{"intent": "automatic_top_up}`. 16 of them are
+  `automatic_top_up`, which explains its 50% score. Fixing this would add up to ~1% accuracy.
+  Possible causes: Q4 quantization, or the merge into the full-precision base instead of the 4-bit one
+  it was trained on. We keep strict scoring here; Phase 8's output guardrail (retry → `unknown`) handles it.
+- Mid-run, the Homebrew `ollama serve` process stopped; the eval resumed from its saved CSV with no lost work.
+  Tip: `brew services start ollama` keeps it running.
 
 ---
 
@@ -299,8 +345,8 @@ how often each guardrail fires.
 - [x] Phase 2: Baseline eval (qwen2.5:0.5b zero-shot: 25.2% accuracy, 97.1% JSON-valid, 25.2% OOV)
 - [x] Phase 3: Error analysis (main failure: keyword-matching between sibling intents)
 - [x] Phase 4: Prepare SFT data (label list kept in prompt; max_seq_length 576)
-- [ ] Phase 5: LoRA fine-tune
-- [ ] Phase 6: Export to Ollama
-- [ ] Phase 7: Re-evaluate and compare
+- [x] Phase 5: LoRA fine-tune (val loss 0.026, no overfitting, 10/10 sanity check)
+- [x] Phase 6: Export to Ollama (`banking77-qwen`, Q4_K_M via llama.cpp, matches baseline format)
+- [x] Phase 7: Re-evaluate and compare (25.2% → 90.7% accuracy; OOV 25.2% → 0.2%)
 - [ ] Phase 8: Guardrails
 - [ ] Phase 9: Write-up and ship

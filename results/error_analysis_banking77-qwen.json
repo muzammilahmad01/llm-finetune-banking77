@@ -1,0 +1,201 @@
+{
+  "model": "banking77-qwen",
+  "n": 3080,
+  "outcomes": {
+    "correct": 0.9071428571428571,
+    "real label, wrong intent": 0.08279220779220779,
+    "invalid JSON": 0.007792207792207792,
+    "invented label (OOV)": 0.0022727272727272726
+  },
+  "oov_near_miss": {
+    "close spelling": 7
+  },
+  "accuracy_gain_if_near_misses_mapped": 0.001948051948051948,
+  "per_intent_accuracy": {
+    "Refund_not_showing_up": 0.9,
+    "activate_my_card": 0.975,
+    "age_limit": 0.975,
+    "apple_pay_or_google_pay": 1.0,
+    "atm_support": 1.0,
+    "automatic_top_up": 0.5,
+    "balance_not_updated_after_bank_transfer": 0.725,
+    "balance_not_updated_after_cheque_or_cash_deposit": 0.675,
+    "beneficiary_not_allowed": 0.75,
+    "cancel_transfer": 1.0,
+    "card_about_to_expire": 1.0,
+    "card_acceptance": 0.925,
+    "card_arrival": 0.9,
+    "card_delivery_estimate": 0.875,
+    "card_linking": 0.975,
+    "card_not_working": 0.95,
+    "card_payment_fee_charged": 0.925,
+    "card_payment_not_recognised": 0.8,
+    "card_payment_wrong_exchange_rate": 0.95,
+    "card_swallowed": 0.925,
+    "cash_withdrawal_charge": 0.925,
+    "cash_withdrawal_not_recognised": 0.975,
+    "change_pin": 1.0,
+    "compromised_card": 0.9,
+    "contactless_not_working": 0.9,
+    "country_support": 1.0,
+    "declined_card_payment": 0.925,
+    "declined_cash_withdrawal": 0.975,
+    "declined_transfer": 0.7,
+    "direct_debit_payment_not_recognised": 0.85,
+    "disposable_card_limits": 0.95,
+    "edit_personal_details": 1.0,
+    "exchange_charge": 0.925,
+    "exchange_rate": 0.975,
+    "exchange_via_app": 0.95,
+    "extra_charge_on_statement": 0.925,
+    "failed_transfer": 0.9,
+    "fiat_currency_support": 0.825,
+    "get_disposable_virtual_card": 0.975,
+    "get_physical_card": 1.0,
+    "getting_spare_card": 0.95,
+    "getting_virtual_card": 0.85,
+    "lost_or_stolen_card": 0.925,
+    "lost_or_stolen_phone": 0.975,
+    "order_physical_card": 0.9,
+    "passcode_forgotten": 1.0,
+    "pending_card_payment": 0.9,
+    "pending_cash_withdrawal": 0.975,
+    "pending_top_up": 0.9,
+    "pending_transfer": 0.75,
+    "pin_blocked": 0.9,
+    "receiving_money": 0.95,
+    "request_refund": 0.95,
+    "reverted_card_payment?": 0.875,
+    "supported_cards_and_currencies": 0.875,
+    "terminate_account": 1.0,
+    "top_up_by_bank_transfer_charge": 0.85,
+    "top_up_by_card_charge": 0.95,
+    "top_up_by_cash_or_cheque": 0.9,
+    "top_up_failed": 0.875,
+    "top_up_limits": 1.0,
+    "top_up_reverted": 0.9,
+    "topping_up_by_card": 0.7,
+    "transaction_charged_twice": 1.0,
+    "transfer_fee_charged": 0.925,
+    "transfer_into_account": 0.775,
+    "transfer_not_received_by_recipient": 0.725,
+    "transfer_timing": 0.9,
+    "unable_to_verify_identity": 0.95,
+    "verify_my_identity": 0.95,
+    "verify_source_of_funds": 1.0,
+    "verify_top_up": 1.0,
+    "virtual_card_not_working": 0.9,
+    "visa_or_mastercard": 0.9,
+    "why_verify_identity": 0.95,
+    "wrong_amount_of_cash_received": 0.9,
+    "wrong_exchange_rate_for_cash_withdrawal": 0.825
+  },
+  "zero_accuracy_intents": [],
+  "top_confusions": [
+    {
+      "gold": "topping_up_by_card",
+      "pred": "top_up_reverted",
+      "count": 7
+    },
+    {
+      "gold": "beneficiary_not_allowed",
+      "pred": "failed_transfer",
+      "count": 5
+    },
+    {
+      "gold": "transfer_not_received_by_recipient",
+      "pred": "balance_not_updated_after_bank_transfer",
+      "count": 5
+    },
+    {
+      "gold": "pending_transfer",
+      "pred": "transfer_not_received_by_recipient",
+      "count": 5
+    },
+    {
+      "gold": "fiat_currency_support",
+      "pred": "exchange_via_app",
+      "count": 5
+    },
+    {
+      "gold": "balance_not_updated_after_bank_transfer",
+      "pred": "transfer_timing",
+      "count": 5
+    },
+    {
+      "gold": "reverted_card_payment?",
+      "pred": "declined_card_payment",
+      "count": 4
+    },
+    {
+      "gold": "getting_virtual_card",
+      "pred": "get_disposable_virtual_card",
+      "count": 4
+    },
+    {
+      "gold": "top_up_failed",
+      "pred": "top_up_reverted",
+      "count": 4
+    },
+    {
+      "gold": "card_delivery_estimate",
+      "pred": "card_arrival",
+      "count": 4
+    },
+    {
+      "gold": "pending_transfer",
+      "pred": "balance_not_updated_after_bank_transfer",
+      "count": 3
+    },
+    {
+      "gold": "exchange_charge",
+      "pred": "exchange_rate",
+      "count": 3
+    },
+    {
+      "gold": "top_up_by_bank_transfer_charge",
+      "pred": "transfer_fee_charged",
+      "count": 3
+    },
+    {
+      "gold": "declined_transfer",
+      "pred": "declined_card_payment",
+      "count": 3
+    },
+    {
+      "gold": "wrong_amount_of_cash_received",
+      "pred": "declined_cash_withdrawal",
+      "count": 3
+    },
+    {
+      "gold": "transfer_into_account",
+      "pred": "top_up_by_bank_transfer_charge",
+      "count": 3
+    },
+    {
+      "gold": "card_payment_not_recognised",
+      "pred": "compromised_card",
+      "count": 3
+    },
+    {
+      "gold": "transfer_not_received_by_recipient",
+      "pred": "transfer_timing",
+      "count": 3
+    },
+    {
+      "gold": "top_up_reverted",
+      "pred": "top_up_failed",
+      "count": 3
+    },
+    {
+      "gold": "transfer_timing",
+      "pred": "balance_not_updated_after_bank_transfer",
+      "count": 3
+    }
+  ],
+  "never_predicted": [],
+  "rare_vs_common_train_accuracy": {
+    "rare15": 0.9233333333333333,
+    "common15": 0.8716666666666666
+  }
+}
