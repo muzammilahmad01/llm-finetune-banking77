@@ -85,4 +85,6 @@ messages only, because 190 real questions start with "Hi" or "Hello".
    and against a merge into the 4-bit base the adapter was trained on.
 4. **Compare against a large hosted model** to see how close 0.5B gets to the ceiling, and at what cost per
    message.
-5. **Publish the adapter** on the Hugging Face Hub so the results can be reproduced without retraining.
+5. **Publish a ready-to-run GGUF** next to the adapter, which is
+   [already on Hugging Face](https://huggingface.co/MuzammilAhmad/banking77-qwen2.5-0.5b-lora), so anyone
+   can `ollama run` it without the merge and export steps.

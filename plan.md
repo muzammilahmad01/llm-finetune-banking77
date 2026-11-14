@@ -217,7 +217,8 @@ length, and why training and inference prompts must match.
 1. ✅ Build `notebooks/finetune_lora.ipynb`: install libraries, load the model, attach LoRA, train.
 2. ✅ Train 1–3 epochs and watch validation loss.
 3. ✅ Quick sanity check in the notebook on a few validation examples.
-4. ✅ Save the LoRA adapter (downloaded to `models/banking77-qwen-adapter/`, not in git). HF Hub push skipped for now.
+4. ✅ Save the LoRA adapter (downloaded to `models/banking77-qwen-adapter/`, not in git). Published later to https://huggingface.co/MuzammilAhmad/banking77-qwen2.5-0.5b-lora
+   (model card, `labels.json`, config pointing at the full-precision base).
 
 **Done when:** validation loss has dropped and the sample predictions look sensible.
 

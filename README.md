@@ -7,6 +7,8 @@ It is the same size and the same speed, and it runs locally in Ollama on a lapto
 The project runs end to end: measure the baseline, find out why it fails, fine-tune on a free Colab GPU,
 export to Ollama, re-measure with the same script, then make it safe to put in front of users.
 
+**Adapter on Hugging Face:** [MuzammilAhmad/banking77-qwen2.5-0.5b-lora](https://huggingface.co/MuzammilAhmad/banking77-qwen2.5-0.5b-lora)
+
 ## Results
 
 Full [Banking77](https://huggingface.co/datasets/PolyAI/banking77) test set: 3,080 customer messages,
@@ -107,6 +109,8 @@ python backend/error_analysis.py
 
 # 3. Fine-tune: run notebooks/finetune_lora.ipynb on a Colab T4 with data/sft_*.jsonl uploaded,
 #    then unzip the downloaded adapter into models/banking77-qwen-adapter/
+#    (or skip training and download the published adapter:)
+hf download MuzammilAhmad/banking77-qwen2.5-0.5b-lora --local-dir models/banking77-qwen-adapter
 
 # 4. Export to Ollama
 uv pip install torch transformers peft
@@ -155,7 +159,8 @@ plan.md                Phase-by-phase roadmap and findings
 WRITEUP.md             What fine-tuning changed, what it cost, what's next
 ```
 
-The model files (adapter, merged weights and GGUF) are not in git because of their size.
+The model files (adapter, merged weights and GGUF) are not in git because of their size. The adapter is
+published on [Hugging Face](https://huggingface.co/MuzammilAhmad/banking77-qwen2.5-0.5b-lora).
 
 ## Limitations
 
