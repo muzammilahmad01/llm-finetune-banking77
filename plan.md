@@ -45,6 +45,8 @@ before/after comparison is fair.
 ```
 LLM/
 ├── README.md               Project overview + final results table (Phase 9)
+├── WRITEUP.md              Short write-up: what changed, cost, next steps (Phase 9)
+├── Modelfile               Ollama recipe for banking77-qwen (Phase 6)
 ├── plan.md                 This file
 ├── requirements.txt        Python dependencies
 ├── .gitignore              Keeps .venv/, caches, secrets out of git
@@ -57,7 +59,9 @@ LLM/
 │   ├── error_analysis.py   How/why a model fails (Phases 3 & 7)
 │   ├── eval_baseline.py    Evaluate any Ollama model (Phases 2 & 7)
 │   ├── prepare_sft.py      Build training files (Phase 4)
-│   └── guardrails.py       Input/output validation (Phase 8)
+│   ├── merge_adapter.py    Merge LoRA adapter, write Modelfile (Phase 6)
+│   ├── guardrails.py       Input/output validation (Phase 8)
+│   └── eval_guardrails.py  Measure guardrails, pick threshold (Phase 8)
 ├── notebooks/
 │   └── finetune_lora.ipynb Colab training notebook (Phase 5)
 ├── data/                   Cached dataset files (not committed to git)
@@ -370,6 +374,14 @@ how often each guardrail fires.
 
 **Done when:** the GitHub repo is public and the README tells the whole story.
 
+**What we did**
+- `README.md` rewritten: headline result, before/after and guardrail tables, pipeline diagram, findings,
+  fine-tuning setup, full reproduce steps, limitations.
+- `WRITEUP.md`: what fine-tuning changed, what it cost, how the guardrails work, what's next.
+- Cleanup: the notebook's Colab GGUF export cells (which crashed the runtime) are replaced with
+  "zip and download the adapter", plus pointers to the local merge.
+- Repo is public: https://github.com/muzammilahmad01/llm-finetune-banking77
+
 ---
 
 ## Progress tracker
@@ -383,4 +395,4 @@ how often each guardrail fires.
 - [x] Phase 6: Export to Ollama (`banking77-qwen`, Q4_K_M via llama.cpp, matches baseline format)
 - [x] Phase 7: Re-evaluate and compare (25.2% → 90.7% accuracy; OOV 25.2% → 0.2%)
 - [x] Phase 8: Guardrails (wrong answers 9.3% → 4.4%, 83% of off-topic caught, 0 real messages blocked)
-- [ ] Phase 9: Write-up and ship
+- [x] Phase 9: Write-up and ship (README, WRITEUP.md, notebook cleanup)
