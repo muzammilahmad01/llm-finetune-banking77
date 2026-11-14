@@ -323,6 +323,40 @@ how often each guardrail fires.
 
 **Done when:** bad inputs are blocked and every output is either a valid label or `"unknown"`.
 
+**What we built** (`backend/guardrails.py`, measured by `backend/eval_guardrails.py`)
+- Input: empty / over 1,000 chars / pure small talk / prompt injection → blocked before the model.
+  Card numbers, IBANs and emails → masked (`[CARD_NUMBER]`, `[IBAN]`, `[EMAIL]`), also in our logs.
+  Small talk is only blocked when the *whole* message is small talk: 190 real messages start with "Hi"/"Hello".
+- Output: strict parse → **repair** the garbled-ending glitch (`"automatic_top_up}`) only if the label is an
+  exact match → pydantic check that it is one of the 77 → **confidence** check → else `"unknown"`.
+- Changed from the plan: no "retry once". At temperature 0 a retry returns the identical answer, so we
+  repair deterministically instead.
+- **Confidence** = probability of the whole reply (product of token probabilities, via Ollama `logprobs`).
+  In scope it is ~0.98; "open a new bank account" 0.41; "hey" 0.03.
+- **Threshold 0.6**, chosen on validation data only: our `val_split` (1,002) + CLINC150 out-of-scope
+  validation (100). Out-of-scope test data: CLINC150 OOS test (1,000), never used for choosing.
+
+**What we found** (test sets)
+
+| Banking77 test (3,080) | No guardrails | Repair only | + confidence ≥ 0.6 |
+|---|---|---|---|
+| Correct | 90.7% | 91.7% | 88.4% |
+| **Wrong** (confidently) | 9.3% | 8.3% | **4.4%** |
+| Sent to a human (`unknown`) | 0% | 0% | 7.1% |
+| Precision (right when it answers) | 90.7% | 91.7% | **95.2%** |
+
+| Out-of-scope test (CLINC150, 1,000) | Repair only | + confidence ≥ 0.6 |
+|---|---|---|
+| Caught (`unknown`) | 34.4% (invented labels) | **82.7%** |
+| Wrongly given a banking label | 65.6% | 17.3% |
+
+- Input rules: **0 of 13,083** real Banking77 messages blocked (no false positives). Hand-written
+  adversarial set: **27/27** as expected (empty, too long, small talk, 5 injections, 8 off-topic, PII, "Hi, …").
+- Trade-off: the confidence check halves confident mistakes (8.3% → 4.4%) and catches 83% of off-topic
+  messages, at the cost of 7.1% of real customers going to a human. Latency unchanged (0.143 s).
+- Limits: rules catch known patterns only; 17% of off-topic messages still get a label. The real fix is to
+  retrain with an `out_of_scope` class (e.g. CLINC150 OOS train data) as a follow-up.
+
 ---
 
 ## Phase 9: Write-up and ship
@@ -348,5 +382,5 @@ how often each guardrail fires.
 - [x] Phase 5: LoRA fine-tune (val loss 0.026, no overfitting, 10/10 sanity check)
 - [x] Phase 6: Export to Ollama (`banking77-qwen`, Q4_K_M via llama.cpp, matches baseline format)
 - [x] Phase 7: Re-evaluate and compare (25.2% → 90.7% accuracy; OOV 25.2% → 0.2%)
-- [ ] Phase 8: Guardrails
+- [x] Phase 8: Guardrails (wrong answers 9.3% → 4.4%, 83% of off-topic caught, 0 real messages blocked)
 - [ ] Phase 9: Write-up and ship

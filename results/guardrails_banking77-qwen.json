@@ -1,0 +1,93 @@
+{
+  "model": "banking77-qwen",
+  "threshold": 0.6,
+  "calibration_val": [
+    {
+      "threshold": 0,
+      "val_correct": 0.9121756487025948,
+      "val_wrong": 0.08582834331337326,
+      "val_to_human": 0.001996007984031989,
+      "oos_caught": 0.37
+    },
+    {
+      "threshold": 0.2,
+      "val_correct": 0.908183632734531,
+      "val_wrong": 0.08283433133732535,
+      "val_to_human": 0.008982035928143728,
+      "oos_caught": 0.53
+    },
+    {
+      "threshold": 0.3,
+      "val_correct": 0.9041916167664671,
+      "val_wrong": 0.07884231536926148,
+      "val_to_human": 0.01696606786427146,
+      "oos_caught": 0.65
+    },
+    {
+      "threshold": 0.4,
+      "val_correct": 0.8982035928143712,
+      "val_wrong": 0.07085828343313373,
+      "val_to_human": 0.03093812375249505,
+      "oos_caught": 0.71
+    },
+    {
+      "threshold": 0.5,
+      "val_correct": 0.8902195608782435,
+      "val_wrong": 0.06187624750499002,
+      "val_to_human": 0.04790419161676651,
+      "oos_caught": 0.79
+    },
+    {
+      "threshold": 0.6,
+      "val_correct": 0.8692614770459082,
+      "val_wrong": 0.04890219560878244,
+      "val_to_human": 0.08183632734530943,
+      "oos_caught": 0.85
+    },
+    {
+      "threshold": 0.7,
+      "val_correct": 0.8473053892215568,
+      "val_wrong": 0.033932135728542916,
+      "val_to_human": 0.11876247504990023,
+      "oos_caught": 0.86
+    },
+    {
+      "threshold": 0.8,
+      "val_correct": 0.8183632734530938,
+      "val_wrong": 0.022954091816367265,
+      "val_to_human": 0.1586826347305389,
+      "oos_caught": 0.89
+    },
+    {
+      "threshold": 0.9,
+      "val_correct": 0.7694610778443114,
+      "val_wrong": 0.00998003992015968,
+      "val_to_human": 0.220558882235529,
+      "oos_caught": 0.94
+    },
+    {
+      "threshold": 0.95,
+      "val_correct": 0.6846307385229541,
+      "val_wrong": 0.006986027944111776,
+      "val_to_human": 0.3083832335329342,
+      "oos_caught": 0.96
+    }
+  ],
+  "test": {
+    "n": 3080,
+    "answered": 0.9285714285714286,
+    "correct": 0.884090909090909,
+    "wrong": 0.04448051948051948,
+    "precision": 0.9520979020979021,
+    "to_human": 0.0714285714285714
+  },
+  "oos_test": {
+    "n": 1000,
+    "answered": 0.173,
+    "correct": 0.0,
+    "wrong": 0.173,
+    "precision": 0.0,
+    "to_human": 0.827
+  },
+  "adversarial_pass": "27/27"
+}
